@@ -94,4 +94,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         page.getResult().forEach(e -> e.setPassword(null)); // Set password to null for security
         return new PageResult(total, page.getResult());
     }
+
+    @Override
+    public void enableOrDisable(Integer status, Long id) {
+        Employee employee = Employee.builder()
+                .status(status)
+                .id(id)
+                .updateTime(LocalDateTime.now())
+                .updateUser(BaseContext.getCurrentId())
+                .build();
+        employeeMapper.update(employee);
+    }
 }

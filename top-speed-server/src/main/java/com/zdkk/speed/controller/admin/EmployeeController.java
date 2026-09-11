@@ -79,4 +79,19 @@ public class EmployeeController {
         PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
     }
+
+    @Operation(summary = "启用/禁用员工账号", description = "启用/禁用员工账号")
+    @PostMapping("/status/{status}")
+    public Result<String> enableOrDisable(@PathVariable Integer status, Long id) {
+        log.info("【启用/禁用员工账号】id = {}, status = {}", id, status);
+        employeeService.enableOrDisable(status, id);
+        return Result.success();
+    }
+
+    @Operation(summary = "员工退出登录", description = "员工退出登录")
+    @PostMapping("/logout")
+    public Result<String> logout() {
+        log.info("【员工退出登录】");
+        return Result.success();
+    }
 }
