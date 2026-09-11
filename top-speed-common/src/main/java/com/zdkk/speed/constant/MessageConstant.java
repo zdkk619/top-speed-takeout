@@ -25,5 +25,6 @@ public class MessageConstant {
     public static final String ORDER_NOT_FOUND = "订单不存在";
     public static final String ACCOUNT_ALREADY_EXISTS = "账号已存在";
     public static final String DATA_ALREADY_EXISTS = "数据已存在";
+    public static final String CATEGORY_ALREADY_EXISTS = "分类已存在";
 }
 
