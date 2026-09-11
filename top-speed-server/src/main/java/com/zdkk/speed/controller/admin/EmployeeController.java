@@ -4,6 +4,7 @@ import com.zdkk.speed.constant.JwtClaimsConstant;
 import com.zdkk.speed.dto.EmployeeDTO;
 import com.zdkk.speed.dto.EmployeeLoginDTO;
 import com.zdkk.speed.dto.EmployeePageQueryDTO;
+import com.zdkk.speed.dto.EmployeePasswordDTO;
 import com.zdkk.speed.entity.Employee;
 import com.zdkk.speed.properties.JwtProperties;
 import com.zdkk.speed.result.PageResult;
@@ -101,6 +102,14 @@ public class EmployeeController {
     public Result<String> enableOrDisable(@PathVariable Integer status, Long id) {
         log.info("【启用/禁用员工账号】id = {}, status = {}", id, status);
         employeeService.enableOrDisable(status, id);
+        return Result.success();
+    }
+
+    @PutMapping("/editPassword")
+    @Operation(summary = "修改密码", description = "修改密码")
+    public Result<String> editPassword(@RequestBody EmployeePasswordDTO employeePasswordDTO) {
+        log.info("【修改密码】{}", employeePasswordDTO.getEmpId());
+        employeeService.editPassword(employeePasswordDTO);
         return Result.success();
     }
 

@@ -9,11 +9,9 @@ import com.zdkk.speed.context.BaseContext;
 import com.zdkk.speed.dto.EmployeeDTO;
 import com.zdkk.speed.dto.EmployeeLoginDTO;
 import com.zdkk.speed.dto.EmployeePageQueryDTO;
+import com.zdkk.speed.dto.EmployeePasswordDTO;
 import com.zdkk.speed.entity.Employee;
-import com.zdkk.speed.exception.AccountAlreadyExistException;
-import com.zdkk.speed.exception.AccountLockedException;
-import com.zdkk.speed.exception.AccountNotFoundException;
-import com.zdkk.speed.exception.PasswordErrorException;
+import com.zdkk.speed.exception.*;
 import com.zdkk.speed.mapper.EmployeeMapper;
 import com.zdkk.speed.result.PageResult;
 import com.zdkk.speed.service.EmployeeService;
@@ -125,5 +123,31 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee getById(Long id) {
         return employeeMapper.getById(id);
+    }
+
+    @Override
+    public void editPassword(EmployeePasswordDTO dto) {
+        // TODO 前端未按照约定传递id
+        Employee employee = employeeMapper.getById(BaseContext.getCurrentId());
+        // 2. 校验旧密码
+        String oldPasswordMd5 = DigestUtils.md5DigestAsHex(dto.getOldPassword().getBytes());
+        if (!oldPasswordMd5.equals(employee.getPassword())) {
+            throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+        }
+
+        // 3. 校验新密码不能和旧密码相同
+        String newPasswordMd5 = DigestUtils.md5DigestAsHex(dto.getNewPassword().getBytes());
+        if (newPasswordMd5.equals(employee.getPassword())) {
+            throw new PasswordEditFailedException(MessageConstant.PASSWORD_EDIT_FAILED);
+        }
+
+        // 4. 更新密码
+        Employee update = Employee.builder()
+                .id(employee.getId())
+                .password(newPasswordMd5)
+                .updateTime(LocalDateTime.now())
+                .updateUser(BaseContext.getCurrentId())
+                .build();
+        employeeMapper.update(update);
     }
 }

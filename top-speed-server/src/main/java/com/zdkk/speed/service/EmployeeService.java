@@ -3,6 +3,7 @@ package com.zdkk.speed.service;
 import com.zdkk.speed.dto.EmployeeDTO;
 import com.zdkk.speed.dto.EmployeeLoginDTO;
 import com.zdkk.speed.dto.EmployeePageQueryDTO;
+import com.zdkk.speed.dto.EmployeePasswordDTO;
 import com.zdkk.speed.entity.Employee;
 import com.zdkk.speed.result.PageResult;
 
@@ -46,4 +47,10 @@ public interface EmployeeService {
      * @return
      */
     Employee getById(Long id);
+
+    /**
+     * 修改密码
+     * @param employeePasswordDTO
+     */
+    void editPassword(EmployeePasswordDTO employeePasswordDTO);
 }
