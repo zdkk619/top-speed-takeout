@@ -14,6 +14,7 @@ import com.zdkk.speed.entity.Employee;
 import com.zdkk.speed.exception.*;
 import com.zdkk.speed.mapper.EmployeeMapper;
 import com.zdkk.speed.result.PageResult;
+import com.zdkk.speed.service.AutoFillService;
 import com.zdkk.speed.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -29,6 +30,9 @@ import java.time.LocalDateTime;
 public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeMapper employeeMapper;
+
+    @Autowired
+    private AutoFillService autoFillService;
 
     @Override
     public Employee login(EmployeeLoginDTO employeeLoginDTO) {
@@ -70,16 +74,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 设置密码为默认密码
         String password = DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes(StandardCharsets.UTF_8));
         employee.setPassword(password);
-
-        // 设置创建时间和最后修改时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-
-        // 设置创建人和最后修改人
-        Long currentId = BaseContext.getCurrentId();
-        employee.setCreateUser(currentId);
-        employee.setUpdateUser(currentId);
-        employeeMapper.insert(employee);
+        autoFillService.insert(employee, employeeMapper::insert);
     }
 
     @Override
@@ -98,10 +93,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = Employee.builder()
                 .status(status)
                 .id(id)
-                .updateTime(LocalDateTime.now())
-                .updateUser(BaseContext.getCurrentId())
                 .build();
-        employeeMapper.update(employee);
+        autoFillService.update(employee, employeeMapper::update);
     }
 
     @Override
@@ -111,13 +104,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 属性拷贝
         BeanUtils.copyProperties(employeeDTO, employee);
 
-        // 设置最后修改时间
-        employee.setUpdateTime(LocalDateTime.now());
-
-        // 设置最后修改人
-        Long currentId = BaseContext.getCurrentId();
-        employee.setUpdateUser(currentId);
-        employeeMapper.update(employee);
+        autoFillService.update(employee, employeeMapper::update);
     }
 
     @Override
@@ -145,9 +132,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee update = Employee.builder()
                 .id(employee.getId())
                 .password(newPasswordMd5)
-                .updateTime(LocalDateTime.now())
-                .updateUser(BaseContext.getCurrentId())
                 .build();
-        employeeMapper.update(update);
+        autoFillService.update(employee, employeeMapper::update);
     }
 }

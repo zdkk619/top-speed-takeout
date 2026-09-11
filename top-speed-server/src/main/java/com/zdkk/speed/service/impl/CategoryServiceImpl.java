@@ -2,12 +2,14 @@ package com.zdkk.speed.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.zdkk.speed.annotation.AutoFill;
 import com.zdkk.speed.constant.MessageConstant;
 import com.zdkk.speed.constant.StatusConstant;
 import com.zdkk.speed.context.BaseContext;
 import com.zdkk.speed.dto.CategoryDTO;
 import com.zdkk.speed.dto.CategoryPageQueryDTO;
 import com.zdkk.speed.entity.Category;
+import com.zdkk.speed.enumeration.OperationType;
 import com.zdkk.speed.exception.AccountAlreadyExistException;
 import com.zdkk.speed.exception.CategoryAlreadyExistsException;
 import com.zdkk.speed.exception.DeletionNotAllowedException;
@@ -15,14 +17,13 @@ import com.zdkk.speed.mapper.CategoryMapper;
 import com.zdkk.speed.mapper.DishMapper;
 import com.zdkk.speed.mapper.SetMealMapper;
 import com.zdkk.speed.result.PageResult;
+import com.zdkk.speed.service.AutoFillService;
 import com.zdkk.speed.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.zdkk.speed.constant.MessageConstant.CATEGORY_ALREADY_EXISTS;
@@ -38,6 +39,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private SetMealMapper setMealMapper;
+
+    @Autowired
+    private AutoFillService autoFillService;
 
     /**
      * 分类分页查询
@@ -68,11 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
         BeanUtils.copyProperties(categoryDTO, category);
         category.setStatus(StatusConstant.DISABLE);
 
-        category.setCreateTime(LocalDateTime.now());
-        category.setUpdateTime(LocalDateTime.now());
-        category.setCreateUser(BaseContext.getCurrentId());
-        category.setUpdateUser(BaseContext.getCurrentId());
-        categoryMapper.insert(category);
+        autoFillService.insert(category, categoryMapper::insert);
     }
 
     @Override
@@ -80,19 +80,15 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = Category.builder()
                 .id(id)
                 .status(status)
-                .updateTime(LocalDateTime.now())
-                .updateUser(BaseContext.getCurrentId())
                 .build();
-        categoryMapper.update(category);
+        autoFillService.update(category, categoryMapper::update);
     }
 
     @Override
     public void update(CategoryDTO categoryDTO) {
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
-        category.setUpdateTime(LocalDateTime.now());
-        category.setUpdateUser(BaseContext.getCurrentId());
-        categoryMapper.update(category);
+        autoFillService.update(category, categoryMapper::update);
     }
 
     @Override
