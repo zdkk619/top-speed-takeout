@@ -1,6 +1,7 @@
 package com.zdkk.speed.controller.admin;
 
 import com.zdkk.speed.constant.JwtClaimsConstant;
+import com.zdkk.speed.dto.EmployeeDTO;
 import com.zdkk.speed.dto.EmployeeLoginDTO;
 import com.zdkk.speed.entity.Employee;
 import com.zdkk.speed.properties.JwtProperties;
@@ -57,5 +58,18 @@ public class EmployeeController {
                 .token(token)
                 .build();
         return Result.success(employeeLoginVO);
+    }
+
+    /**
+     * 新增员工
+     * @param employeeDTO
+     * @return
+     */
+    @PostMapping
+    @Operation(summary = "新增员工", description = "新增员工")
+    public Result<String> save(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("【新增员工】{}", employeeDTO);
+        employeeService.save(employeeDTO);
+        return Result.success();
     }
 }

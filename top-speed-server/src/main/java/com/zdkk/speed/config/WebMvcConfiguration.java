@@ -1,14 +1,33 @@
 package com.zdkk.speed.config;
 
+import com.zdkk.speed.interceptor.AdminJwtTokenInterceptor;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class SwaggerConfig {
+@Slf4j
+public class WebMvcConfiguration implements WebMvcConfigurer {
+
+    @Autowired
+    private AdminJwtTokenInterceptor adminJwtTokenInterceptor;
+    /**
+     * 添加拦截器
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        log.info("开始注册自定义拦截器...");
+        registry.addInterceptor(adminJwtTokenInterceptor)
+                .addPathPatterns("/admin/**")
+                .excludePathPatterns("/admin/employee/login");
+    }
 
     @Bean
     public OpenAPI customOpenAPI() {

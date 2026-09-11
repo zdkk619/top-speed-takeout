@@ -1,19 +1,25 @@
 package com.zdkk.speed.service.impl;
 
 import com.zdkk.speed.constant.MessageConstant;
+import com.zdkk.speed.constant.PasswordConstant;
 import com.zdkk.speed.constant.StatusConstant;
+import com.zdkk.speed.context.BaseContext;
+import com.zdkk.speed.dto.EmployeeDTO;
 import com.zdkk.speed.dto.EmployeeLoginDTO;
 import com.zdkk.speed.entity.Employee;
+import com.zdkk.speed.exception.AccountAlreadyExistException;
 import com.zdkk.speed.exception.AccountLockedException;
 import com.zdkk.speed.exception.AccountNotFoundException;
 import com.zdkk.speed.exception.PasswordErrorException;
 import com.zdkk.speed.mapper.EmployeeMapper;
 import com.zdkk.speed.service.EmployeeService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -42,5 +48,33 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // 3. 返回实体对象
         return employee;
+    }
+
+    @Override
+    public void save(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        // 提前检查账号是否已存在
+        if (employeeMapper.getByUsername(employeeDTO.getUsername()) != null) {
+            throw new AccountAlreadyExistException(MessageConstant.ACCOUNT_ALREADY_EXISTS);
+        }
+
+        // 属性拷贝
+        BeanUtils.copyProperties(employeeDTO, employee);
+
+        // 设置账号状态为启用
+        employee.setStatus(StatusConstant.ENABLE);
+        // 设置密码为默认密码
+        String password = DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes(StandardCharsets.UTF_8));
+        employee.setPassword(password);
+
+        // 设置创建时间和最后修改时间
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+
+        // 设置创建人和最后修改人
+        Long currentId = BaseContext.getCurrentId();
+        employee.setCreateUser(currentId);
+        employee.setUpdateUser(currentId);
+        employeeMapper.insert(employee);
     }
 }

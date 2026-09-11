@@ -47,4 +47,22 @@ public class JwtUtil {
                 .parseSignedClaims(token)                // 解析并校验签名+过期
                 .getPayload();
     }
+
+    /**
+     * 判断 JWT 是否已过期
+     *
+     * @param secretKey 签名密钥
+     * @param token     JWT 字符串
+     * @return true=已过期，false=未过期
+     */
+    public static boolean isExpired(String secretKey, String token) {
+        try {
+            Claims claims = parseToken(secretKey, token);
+            Date expiration = claims.getExpiration();
+            return expiration == null || expiration.before(new Date());
+        } catch (Exception e) {
+            // 解析失败（签名错误、格式错误、已过期等）统一视为不可用
+            return true;
+        }
+    }
 }
