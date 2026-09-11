@@ -2,7 +2,9 @@ package com.zdkk.speed.service;
 
 import com.zdkk.speed.dto.EmployeeDTO;
 import com.zdkk.speed.dto.EmployeeLoginDTO;
+import com.zdkk.speed.dto.EmployeePageQueryDTO;
 import com.zdkk.speed.entity.Employee;
+import com.zdkk.speed.result.PageResult;
 
 public interface EmployeeService {
     /**
@@ -17,4 +19,11 @@ public interface EmployeeService {
      * @param employeeDTO
      */
     void save(EmployeeDTO employeeDTO);
+
+    /**
+     * 员工分页查询
+     * @param employeePageQueryDTO
+     * @return
+     */
+    PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
 }

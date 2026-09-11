@@ -3,8 +3,10 @@ package com.zdkk.speed.controller.admin;
 import com.zdkk.speed.constant.JwtClaimsConstant;
 import com.zdkk.speed.dto.EmployeeDTO;
 import com.zdkk.speed.dto.EmployeeLoginDTO;
+import com.zdkk.speed.dto.EmployeePageQueryDTO;
 import com.zdkk.speed.entity.Employee;
 import com.zdkk.speed.properties.JwtProperties;
+import com.zdkk.speed.result.PageResult;
 import com.zdkk.speed.result.Result;
 import com.zdkk.speed.service.EmployeeService;
 import com.zdkk.speed.utils.JwtUtil;
@@ -13,10 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -71,5 +70,13 @@ public class EmployeeController {
         log.info("【新增员工】{}", employeeDTO);
         employeeService.save(employeeDTO);
         return Result.success();
+    }
+
+    @Operation(summary = "员工分页查询", description = "分页查询员工")
+    @GetMapping("/page")
+    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO) {
+        log.info("【分页查询员工】 page:{}, pageSize:{}", employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
+        return Result.success(pageResult);
     }
 }

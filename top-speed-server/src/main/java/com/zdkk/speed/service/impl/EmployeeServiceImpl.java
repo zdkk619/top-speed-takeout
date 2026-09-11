@@ -1,18 +1,23 @@
 package com.zdkk.speed.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.zdkk.speed.constant.MessageConstant;
 import com.zdkk.speed.constant.PasswordConstant;
 import com.zdkk.speed.constant.StatusConstant;
 import com.zdkk.speed.context.BaseContext;
 import com.zdkk.speed.dto.EmployeeDTO;
 import com.zdkk.speed.dto.EmployeeLoginDTO;
+import com.zdkk.speed.dto.EmployeePageQueryDTO;
 import com.zdkk.speed.entity.Employee;
 import com.zdkk.speed.exception.AccountAlreadyExistException;
 import com.zdkk.speed.exception.AccountLockedException;
 import com.zdkk.speed.exception.AccountNotFoundException;
 import com.zdkk.speed.exception.PasswordErrorException;
 import com.zdkk.speed.mapper.EmployeeMapper;
+import com.zdkk.speed.result.PageResult;
 import com.zdkk.speed.service.EmployeeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 @Service
+@Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeMapper employeeMapper;
@@ -76,5 +82,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setCreateUser(currentId);
         employee.setUpdateUser(currentId);
         employeeMapper.insert(employee);
+    }
+
+    @Override
+    public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        // 开始分页查询
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO);
+        log.info("page: {}", page);
+        long total = page.getTotal();
+        page.getResult().forEach(e -> e.setPassword(null)); // Set password to null for security
+        return new PageResult(total, page.getResult());
     }
 }
