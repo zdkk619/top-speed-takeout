@@ -53,4 +53,10 @@ public interface DishMapper {
      */
     @Select("delete from dish where id = #{id}")
     void deleteById(Long id);
+
+    /**
+     * 更新菜品
+     * @param dish
+     */
+    void update(Dish dish);
 }

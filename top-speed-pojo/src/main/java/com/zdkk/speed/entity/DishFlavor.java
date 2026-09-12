@@ -1,5 +1,6 @@
 package com.zdkk.speed.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,16 +12,19 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "菜品口味")
 public class DishFlavor implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @Schema(description = "口味id")
     private Long id;
-    //菜品id
+
+    @Schema(description = "菜品id")
     private Long dishId;
 
-    //口味名称
+    @Schema(description = "口味名称")
     private String name;
 
-    //口味数据 数组字符串，按逗号分割
+    @Schema(description = "口味数据 数组字符串，按逗号分割")
     private String value;
 }

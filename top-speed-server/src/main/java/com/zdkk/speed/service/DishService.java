@@ -2,7 +2,9 @@ package com.zdkk.speed.service;
 
 import com.zdkk.speed.dto.DishDTO;
 import com.zdkk.speed.dto.DishPageQueryDTO;
+import com.zdkk.speed.entity.Dish;
 import com.zdkk.speed.result.PageResult;
+import com.zdkk.speed.vo.DishVO;
 
 import java.util.List;
 
@@ -25,4 +27,24 @@ public interface DishService {
      * @param ids
      */
     void delete(List<Long> ids);
+
+    /**
+     * 修改菜品状态
+     * @param id
+     * @param status
+     */
+    void enableOrDisable(Long id, Integer status);
+
+    /**
+     * 根据id查询菜品
+     * @param id
+     * @return
+     */
+    DishVO getById(Long id);
+
+    /**
+     * 修改菜品(可能有口味配置)
+     * @param dishDTO
+     */
+    void update(DishDTO dishDTO);
 }
