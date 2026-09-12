@@ -4,15 +4,16 @@ package com.zdkk.speed.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.zdkk.speed.constant.MessageConstant;
+import com.zdkk.speed.constant.StatusConstant;
 import com.zdkk.speed.dto.DishDTO;
 import com.zdkk.speed.dto.DishPageQueryDTO;
 import com.zdkk.speed.entity.Dish;
 import com.zdkk.speed.entity.DishFlavor;
+import com.zdkk.speed.entity.SetMeal;
 import com.zdkk.speed.exception.CategoryTypeNotFoundException;
+import com.zdkk.speed.exception.DeleteNotAllowedException;
 import com.zdkk.speed.exception.DishAlreadyExistsException;
-import com.zdkk.speed.mapper.CategoryMapper;
-import com.zdkk.speed.mapper.DishFlavorMapper;
-import com.zdkk.speed.mapper.DishMapper;
+import com.zdkk.speed.mapper.*;
 import com.zdkk.speed.result.PageResult;
 import com.zdkk.speed.service.AutoFillService;
 import com.zdkk.speed.service.DishService;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class DishServiceImpl implements DishService {
@@ -37,6 +39,9 @@ public class DishServiceImpl implements DishService {
 
     @Autowired
     private AutoFillService autoFillService;
+
+    @Autowired
+    private SetMealDishMapper setMealDishMapper;
 
     @Transactional
     @Override
@@ -66,5 +71,30 @@ public class DishServiceImpl implements DishService {
         PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
         Page<DishVO> page = dishMapper.pageQuery(dishPageQueryDTO);
         return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    @Transactional
+    @Override
+    public void delete(List<Long> ids) {
+        // 判断当前菜品能否删除
+        // 1. 菜品是停用状态
+        for (Long id : ids) {
+            Dish dish = dishMapper.getById(id);
+            if (Objects.equals(dish.getStatus(), StatusConstant.ENABLE)) {
+                throw new DeleteNotAllowedException(MessageConstant.DISH_ON_SALE);
+            }
+        }
+
+        // 2. 菜品没有关联套餐
+        List<Long> setMealIds =  setMealDishMapper.getSetMealsByDishIds(ids);
+        if (setMealIds != null && !setMealIds.isEmpty()) {
+            throw new DeleteNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
+        }
+
+        // 可以删除，需将口味一并删除
+        for (Long id : ids) {
+            dishMapper.deleteById(id);
+            dishFlavorMapper.deleteByDishId(id);
+        }
     }
 }

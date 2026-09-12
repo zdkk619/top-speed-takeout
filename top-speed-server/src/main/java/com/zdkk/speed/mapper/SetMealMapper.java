@@ -1,7 +1,10 @@
 package com.zdkk.speed.mapper;
 
+import com.zdkk.speed.entity.SetMeal;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface SetMealMapper {

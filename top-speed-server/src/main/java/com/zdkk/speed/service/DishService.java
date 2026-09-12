@@ -4,6 +4,8 @@ import com.zdkk.speed.dto.DishDTO;
 import com.zdkk.speed.dto.DishPageQueryDTO;
 import com.zdkk.speed.result.PageResult;
 
+import java.util.List;
+
 public interface DishService {
     /**
      * 新增菜品
@@ -17,4 +19,10 @@ public interface DishService {
      * @return
      */
     PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO);
+
+    /**
+     * 删除菜品
+     * @param ids
+     */
+    void delete(List<Long> ids);
 }
