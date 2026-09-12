@@ -3,6 +3,7 @@ package com.zdkk.speed.mapper;
 import com.github.pagehelper.Page;
 import com.zdkk.speed.dto.DishPageQueryDTO;
 import com.zdkk.speed.entity.Dish;
+import com.zdkk.speed.vo.DishVO;
 import jakarta.validation.constraints.NotBlank;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -36,5 +37,5 @@ public interface DishMapper {
      * @param dishPageQueryDTO
      * @return
      */
-    Page<Dish> pageQuery(DishPageQueryDTO dishPageQueryDTO);
+    Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
 }
