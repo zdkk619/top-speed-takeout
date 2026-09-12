@@ -1,16 +1,16 @@
 package com.zdkk.speed.controller.admin;
 
 import com.zdkk.speed.dto.DishDTO;
+import com.zdkk.speed.dto.DishPageQueryDTO;
+import com.zdkk.speed.entity.Dish;
+import com.zdkk.speed.result.PageResult;
 import com.zdkk.speed.result.Result;
 import com.zdkk.speed.service.DishService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/dish")
@@ -26,5 +26,15 @@ public class DishController {
         log.info("【新增菜品】 dishDTO:{}", dishDTO);
         dishService.save(dishDTO);
         return Result.success();
+    }
+
+
+    @GetMapping("/page")
+    @Operation(summary = "菜品分页查询", description = "菜品分页查询")
+    public Result<PageResult> pageQuery(DishPageQueryDTO dishPageQueryDTO) {
+        // TODO 前端这里传的页码和页大小需要调整，如果带有额外查询条件，需将页码重置为1
+        log.info("【菜品分页查询】 dishPageQueryDTO:{}", dishPageQueryDTO);
+        PageResult pageResult = dishService.pageQuery(dishPageQueryDTO);
+        return Result.success(pageResult);
     }
 }

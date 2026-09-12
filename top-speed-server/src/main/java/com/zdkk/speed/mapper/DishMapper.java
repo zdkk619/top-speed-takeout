@@ -1,5 +1,7 @@
 package com.zdkk.speed.mapper;
 
+import com.github.pagehelper.Page;
+import com.zdkk.speed.dto.DishPageQueryDTO;
 import com.zdkk.speed.entity.Dish;
 import jakarta.validation.constraints.NotBlank;
 import org.apache.ibatis.annotations.Mapper;
@@ -28,4 +30,11 @@ public interface DishMapper {
      * @param dish
      */
     void insert(Dish dish);
+
+    /**
+     * 分页查询菜品
+     * @param dishPageQueryDTO
+     * @return
+     */
+    Page<Dish> pageQuery(DishPageQueryDTO dishPageQueryDTO);
 }

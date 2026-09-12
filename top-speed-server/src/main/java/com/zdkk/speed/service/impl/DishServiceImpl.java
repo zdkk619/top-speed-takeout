@@ -1,8 +1,11 @@
 package com.zdkk.speed.service.impl;
 
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.zdkk.speed.constant.MessageConstant;
 import com.zdkk.speed.dto.DishDTO;
+import com.zdkk.speed.dto.DishPageQueryDTO;
 import com.zdkk.speed.entity.Dish;
 import com.zdkk.speed.entity.DishFlavor;
 import com.zdkk.speed.exception.CategoryTypeNotFoundException;
@@ -10,6 +13,7 @@ import com.zdkk.speed.exception.DishAlreadyExistsException;
 import com.zdkk.speed.mapper.CategoryMapper;
 import com.zdkk.speed.mapper.DishFlavorMapper;
 import com.zdkk.speed.mapper.DishMapper;
+import com.zdkk.speed.result.PageResult;
 import com.zdkk.speed.service.AutoFillService;
 import com.zdkk.speed.service.DishService;
 import org.springframework.beans.BeanUtils;
@@ -48,11 +52,18 @@ public class DishServiceImpl implements DishService {
         autoFillService.insert(dish, dishMapper::insert);
 
         List<DishFlavor> flavors = dishDTO.getFlavors();
-        if (flavors != null && flavors.size() > 0) {
+        if (flavors != null && !flavors.isEmpty()) {
             flavors.forEach(flavor -> {
                 flavor.setDishId(dish.getId());
             });
             dishFlavorMapper.insertBatch(flavors);
         }
+    }
+
+    @Override
+    public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
+        PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
+        Page<Dish> page = dishMapper.pageQuery(dishPageQueryDTO);
+        return new PageResult(page.getTotal(), page.getResult());
     }
 }
