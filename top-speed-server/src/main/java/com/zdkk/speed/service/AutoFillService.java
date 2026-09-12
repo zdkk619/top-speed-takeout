@@ -1,6 +1,7 @@
 package com.zdkk.speed.service;
 
 import com.zdkk.speed.annotation.AutoFill;
+import com.zdkk.speed.entity.SetMeal;
 import com.zdkk.speed.enumeration.OperationType;
 import org.springframework.stereotype.Service;
 

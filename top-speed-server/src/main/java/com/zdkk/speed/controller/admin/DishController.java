@@ -42,7 +42,7 @@ public class DishController {
     }
 
     @DeleteMapping
-    @Operation(summary = "删除菜品", description = "删除菜品，可以删除一个或多个，用逗号分隔")
+    @Operation(summary = "删除菜品", description = "删除菜品，同时删除菜品对应的口味数据，可以删除一个或多个，用逗号分隔")
     public Result<String> delete(@RequestParam List<Long> ids) {
         log.info("【删除菜品】 ids:{}", ids);
         dishService.delete(ids);
@@ -71,5 +71,13 @@ public class DishController {
         log.info("【修改菜品】 dishDTO:{}", dishDTO);
         dishService.update(dishDTO);
         return Result.success();
+    }
+
+    @GetMapping("/list")
+    @Operation(summary = "根据分类id查询菜品列表", description = "根据分类id查询菜品列表")
+    public Result<List<Dish>> list(@RequestParam Long categoryId) {
+        log.info("【根据分类id查询菜品列表】 categoryId:{}", categoryId);
+        List<Dish> dishList = dishService.list(categoryId);
+        return Result.success(dishList);
     }
 }
