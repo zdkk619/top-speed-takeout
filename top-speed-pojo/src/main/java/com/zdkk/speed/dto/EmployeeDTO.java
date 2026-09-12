@@ -1,6 +1,7 @@
 package com.zdkk.speed.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -11,22 +12,22 @@ public class EmployeeDTO {
     private Long id;
 
     @Schema(description = "身份证")
-    @NotNull
+    @NotBlank
     private String idNumber;
 
     @Schema(description = "姓名")
-    @NotNull
+    @NotBlank
     private String name;
 
     @Schema(description = "电话号")
-    @NotNull
+    @NotBlank
     private String phone;
 
     @Schema(description = "性别")
-    @NotNull
+    @NotBlank
     private String sex;
 
     @Schema(description = "用户名")
-    @NotNull
+    @NotBlank
     private String username;
 }

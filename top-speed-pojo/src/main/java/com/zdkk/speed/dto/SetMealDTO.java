@@ -3,6 +3,8 @@ package com.zdkk.speed.dto;
 import com.zdkk.speed.constant.CategoryTypeConstant;
 import com.zdkk.speed.entity.SetmealDish;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import java.io.Serial;
@@ -26,6 +28,7 @@ public class SetMealDTO implements Serializable {
     private Long categoryId;
 
     @Schema(description = "套餐名称")
+    @NotBlank
     private String name;
 
     @Schema(description = "套餐价格")
@@ -40,6 +43,7 @@ public class SetMealDTO implements Serializable {
     @Schema(description = "图片")
     private String image;
 
+    @NotEmpty
     @Schema(description = "套餐菜品关系")
     private List<SetmealDish> setmealDishes = new ArrayList<>();
 }

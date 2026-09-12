@@ -13,7 +13,9 @@ import com.zdkk.speed.entity.SetmealDish;
 import com.zdkk.speed.exception.CategoryTypeNotFoundException;
 import com.zdkk.speed.exception.DeleteNotAllowedException;
 import com.zdkk.speed.exception.SetMealAlreadyExistsException;
+import com.zdkk.speed.exception.SetMealEnableFailedException;
 import com.zdkk.speed.mapper.CategoryMapper;
+import com.zdkk.speed.mapper.DishMapper;
 import com.zdkk.speed.mapper.SetMealDishMapper;
 import com.zdkk.speed.mapper.SetMealMapper;
 import com.zdkk.speed.result.PageResult;
@@ -40,6 +42,9 @@ public class SetMealServiceImpl implements SetMealService {
 
     @Autowired
     private AutoFillService autoFillService;
+    @Autowired
+    private DishMapper dishMapper;
+
     @Override
     public PageResult pageQuery(SetMealPageQueryDTO setMealPageQueryDTO) {
         PageHelper.startPage(setMealPageQueryDTO.getPage(), setMealPageQueryDTO.getPageSize());
@@ -101,6 +106,16 @@ public class SetMealServiceImpl implements SetMealService {
 
     @Override
     public void enableOrDisable(Integer status, Long id) {
+        if (Objects.equals(status, StatusConstant.ENABLE)) {
+            List<Dish> dishes = dishMapper.getBySetMealId(id);
+            if (dishes != null && !dishes.isEmpty()) {
+                long count = dishes.stream().filter(dish -> dish.getStatus().equals(StatusConstant.DISABLE)).count();
+                if (count > 0) {
+                    throw new SetMealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+                }
+            }
+        }
+
         SetMeal setMeal = SetMeal.builder()
                 .id(id)
                 .status(status)
