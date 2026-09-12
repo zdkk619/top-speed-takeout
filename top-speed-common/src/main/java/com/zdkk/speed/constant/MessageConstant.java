@@ -27,5 +27,6 @@ public class MessageConstant {
     public static final String DATA_ALREADY_EXISTS = "数据已存在";
     public static final String CATEGORY_ALREADY_EXISTS = "分类已存在";
     public static final String AUTO_FILL_FAILED = "自动填充失败";
+    public static final String CATEGORY_TYPE_NOT_FOUND = "分类类型不存在";
 }
 

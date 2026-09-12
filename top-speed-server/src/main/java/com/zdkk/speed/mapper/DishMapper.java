@@ -1,5 +1,7 @@
 package com.zdkk.speed.mapper;
 
+import com.zdkk.speed.entity.Dish;
+import jakarta.validation.constraints.NotBlank;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -12,4 +14,18 @@ public interface DishMapper {
      */
     @Select("SELECT COUNT(*) FROM dish WHERE category_id = #{id}")
     int countByCategoryId(Long id);
+
+    /**
+     * 根据名称查询菜品
+     * @param name
+     * @return
+     */
+    @Select("SELECT * FROM dish WHERE name = #{name}")
+    Dish getByName(String name);
+
+    /**
+     * 插入菜品
+     * @param dish
+     */
+    void insert(Dish dish);
 }

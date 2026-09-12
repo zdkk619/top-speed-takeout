@@ -3,6 +3,7 @@ package com.zdkk.speed.mapper;
 import com.github.pagehelper.Page;
 import com.zdkk.speed.dto.CategoryPageQueryDTO;
 import com.zdkk.speed.entity.Category;
+import jakarta.validation.constraints.NotNull;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -56,4 +57,13 @@ public interface CategoryMapper {
      */
     @Delete("DELETE FROM category WHERE id = #{id}")
     void deleteById(Long id);
+
+    /**
+     * 根据分类id和类型查询分类
+     * @param categoryId
+     * @param type
+     * @return
+     */
+    @Select("SELECT * FROM category WHERE id = #{categoryId} AND type = #{type}")
+    Category getByIdAndType(@NotNull Long categoryId, int type);
 }
