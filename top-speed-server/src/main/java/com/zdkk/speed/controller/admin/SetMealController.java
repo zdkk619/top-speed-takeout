@@ -10,6 +10,7 @@ import com.zdkk.speed.result.Result;
 import com.zdkk.speed.service.SetMealService;
 import com.zdkk.speed.vo.SetMealVO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/setmeal")
 @Slf4j
+@Tag(name = "套餐管理", description = "套餐管理")
 public class SetMealController {
 
     @Autowired

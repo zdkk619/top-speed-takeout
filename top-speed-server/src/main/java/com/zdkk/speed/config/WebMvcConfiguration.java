@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,26 +30,40 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 .excludePathPatterns("/admin/employee/login");
     }
 
+    private Info createInfo(String title) {
+        return new Info()
+                .title("Top-Speed-Takeout " + title + " API 文档")
+                .version("1.0")
+                .description("基于 SpringDoc + Knife4j-next 的 极速外卖 " + title + " 接口文档")
+                .contact(new Contact()
+                        .name("zdkk")
+                        .email("1040893382@qq.com")
+                        .url("https://github.com/zdkk619/top-speed-takeout"))
+                .termsOfService("http://example.com/terms")
+                .license(new License()
+                        .name("Apache 2.0")
+                        .url("http://springdoc.org"));
+    }
+
+    // 配置后 Knife4j 左上角下拉框会出现“管理模块”“用户模块”两个分组。
     @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        // 1. 设置标题
-                        .title("Top-Speed-Takeout 项目 API 文档")
-                        // 2. 设置版本
-                        .version("1.0")
-                        // 3. 设置描述/简介
-                        .description("基于 SpringDoc + Knife4j 的 极速外卖 接口文档")
-                        // 4. 设置作者信息 (对应截图中的 作者)
-                        .contact(new Contact()
-                                .name("zdkk")
-                                .email("1040893382@qq.com")
-                                .url("https://github.com/your-repo"))
-                        // 5. 设置服务条款
-                        .termsOfService("http://example.com/terms")
-                        // 6. 设置许可证 (可选，通常也会显示在文档底部或侧边栏)
-                        .license(new License()
-                                .name("Apache 2.0")
-                                .url("http://springdoc.org")));
+    public GroupedOpenApi userGroup() {
+        return GroupedOpenApi.builder()
+                .group("管理模块")
+                .pathsToMatch("/admin/**")
+                .packagesToScan("com.zdkk.speed.controller.admin")
+                // 在这里单独设置文档信息
+                .addOpenApiCustomizer(openApi -> openApi.info(createInfo("管理模块")))
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi orderGroup() {
+        return GroupedOpenApi.builder()
+                .group("用户模块")
+                .pathsToMatch("/user/**")
+                .packagesToScan("com.zdkk.speed.controller.user")
+                .addOpenApiCustomizer(openApi -> openApi.info(createInfo("用户模块")))
+                .build();
     }
 }

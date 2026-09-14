@@ -5,6 +5,8 @@ import com.zdkk.speed.utils.AliOssUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -34,5 +36,17 @@ public class MyTest {
     @Test
     public void test03() {
         aliOssUtil.upload("hello，你好".getBytes(StandardCharsets.UTF_8), "hello.txt");
+    }
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+    @Test
+    public void test04() {
+        System.out.println(redisTemplate);
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set("test", "hello");
+        System.out.println(valueOperations.get("test"));
+        redisTemplate.delete("test");
+        System.out.println(valueOperations.get("test"));
     }
 }
