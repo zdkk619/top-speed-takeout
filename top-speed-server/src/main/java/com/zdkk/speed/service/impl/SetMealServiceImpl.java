@@ -21,6 +21,7 @@ import com.zdkk.speed.mapper.SetMealMapper;
 import com.zdkk.speed.result.PageResult;
 import com.zdkk.speed.service.AutoFillService;
 import com.zdkk.speed.service.SetMealService;
+import com.zdkk.speed.vo.DishItemVO;
 import com.zdkk.speed.vo.SetMealVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,5 +140,15 @@ public class SetMealServiceImpl implements SetMealService {
             setmealDishMapper.deleteBySetMealId(id);
             setMealMapper.delete(id);
         });
+    }
+
+    @Override
+    public List<SetMeal> list(SetMeal setMeal) {
+        return setMealMapper.list(setMeal);
+    }
+
+    @Override
+    public List<DishItemVO> getDishItemsBySetMealId(Long id) {
+        return setMealMapper.getDishItemsBySetMealId(id);
     }
 }

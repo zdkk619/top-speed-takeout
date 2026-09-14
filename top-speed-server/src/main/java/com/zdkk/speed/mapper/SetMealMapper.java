@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.zdkk.speed.dto.SetMealDTO;
 import com.zdkk.speed.dto.SetMealPageQueryDTO;
 import com.zdkk.speed.entity.SetMeal;
+import com.zdkk.speed.vo.DishItemVO;
 import com.zdkk.speed.vo.SetMealVO;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
@@ -62,4 +63,19 @@ public interface SetMealMapper {
      */
     @Delete("DELETE FROM setmeal WHERE id = #{id}")
     void delete(Long id);
+
+    /**
+     * 根据条件查询套餐列表
+     * @param setMeal
+     * @return
+     */
+    List<SetMeal> list(SetMeal setMeal);
+
+    /**
+     * 根据套餐id查询菜品列表
+     * @param id
+     * @return
+     */
+    @Select("select sd.name, sd.copies, d.image, d.description from setmeal_dish sd join dish d on sd.dish_id = d.id where sd.setmeal_id = #{id}")
+    List<DishItemVO> getDishItemsBySetMealId(Long id);
 }

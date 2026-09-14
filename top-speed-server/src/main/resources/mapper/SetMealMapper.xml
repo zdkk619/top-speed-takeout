@@ -48,6 +48,21 @@
                 and s.status = #{status}
             </if>
         </where>
-        order by s.update_time desc
+        order by s.create_time desc
+    </select>
+    <select id="list" resultType="com.zdkk.speed.entity.SetMeal">
+        select * from setmeal
+        <where>
+            <if test="name != null and name != ''">
+                name like CONCAT('%', #{name}, '%')
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+        </where>
+        order by create_time desc
     </select>
 </mapper>

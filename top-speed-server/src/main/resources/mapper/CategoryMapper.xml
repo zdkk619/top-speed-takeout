@@ -23,6 +23,13 @@
             <if test="name != null and name != ''"> and name like CONCAT('%', #{name}, '%')</if>
             <if test="type != null"> and type = #{type}</if>
         </where>
-        order by sort asc, update_time desc
+        order by sort asc, create_time desc
+    </select>
+    <select id="list" resultType="com.zdkk.speed.entity.Category">
+        SELECT * FROM category
+                 <where>
+                     <if test="type != null"> and type = #{type}</if>
+                 </where>
+        ORDER BY sort ASC, create_time DESC
     </select>
 </mapper>

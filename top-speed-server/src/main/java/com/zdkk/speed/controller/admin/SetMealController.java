@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController("adminSetMealController")
 @RequestMapping("/admin/setmeal")
 @Slf4j
 @Tag(name = "套餐管理", description = "套餐管理")
@@ -37,7 +37,7 @@ public class SetMealController {
 
     @PostMapping
     @Operation(summary = "新增套餐", description = "新增套餐")
-    public Result save(@RequestBody SetMealDTO setMealDTO) {
+    public Result<String> save(@RequestBody SetMealDTO setMealDTO) {
         log.info("【新增套餐】setMealDTO:{}", setMealDTO);
         setMealService.save(setMealDTO);
         return Result.success();
