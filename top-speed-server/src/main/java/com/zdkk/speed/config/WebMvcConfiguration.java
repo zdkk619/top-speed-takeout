@@ -1,6 +1,7 @@
 package com.zdkk.speed.config;
 
 import com.zdkk.speed.interceptor.AdminJwtTokenInterceptor;
+import com.zdkk.speed.interceptor.UserJwtTokenInterceptor;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -19,6 +20,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private AdminJwtTokenInterceptor adminJwtTokenInterceptor;
+    @Autowired
+    private UserJwtTokenInterceptor userJwtTokenInterceptor;
     /**
      * 添加拦截器
      */
@@ -28,6 +31,10 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(adminJwtTokenInterceptor)
                 .addPathPatterns("/admin/**")
                 .excludePathPatterns("/admin/employee/login");
+        registry.addInterceptor(userJwtTokenInterceptor)
+                .addPathPatterns("/user/**")
+                .excludePathPatterns("/user/user/login")
+                .excludePathPatterns("/user/shop/status");
     }
 
     private Info createInfo(String title) {

@@ -15,30 +15,37 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 @Slf4j
-public class AdminJwtTokenInterceptor implements HandlerInterceptor {
-
+public class UserJwtTokenInterceptor implements HandlerInterceptor {
     @Autowired
     private JwtProperties jwtProperties;
+
+    /**
+     * 校验jwt
+     * @param request current HTTP request
+     * @param response current HTTP response
+     * @param handler chosen handler to execute, for type and/or instance evaluation
+     * @return
+     * @throws Exception
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
-
-        String token = request.getHeader(jwtProperties.getAdminTokenName());
+        String token = request.getHeader(jwtProperties.getUserTokenName());
 
         try {
-            log.info("【jwt校验】员工：{}", token);
-            Claims claims = JwtUtil.parseToken(jwtProperties.getAdminSecretKey(), token);
-            if (JwtUtil.isExpired(jwtProperties.getAdminSecretKey(), token)) {
+            log.info("【jwt校验】用户：{}", token);
+            Claims claims = JwtUtil.parseToken(jwtProperties.getUserSecretKey(), token);
+            if (JwtUtil.isExpired(jwtProperties.getUserSecretKey(), token)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return false;
             }
-            long id = Long.parseLong(claims.get(JwtClaimsConstant.EMP_ID).toString());
-            log.info("【jwt校验】员工id: {}", id);
+            long id = Long.parseLong(claims.get(JwtClaimsConstant.USER_ID).toString());
+            log.info("【jwt校验】用户id: {}", id);
             BaseContext.setCurrentId(id);
             return true;
-        } catch (Exception ex) {
+        } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
