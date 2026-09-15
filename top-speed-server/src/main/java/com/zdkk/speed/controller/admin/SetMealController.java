@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class SetMealController {
 
     @PostMapping
     @Operation(summary = "新增套餐", description = "新增套餐")
+    @CacheEvict(value = "setMealCache", key = "#setMealDTO.categoryId")
     public Result<String> save(@RequestBody SetMealDTO setMealDTO) {
         log.info("【新增套餐】setMealDTO:{}", setMealDTO);
         setMealService.save(setMealDTO);
@@ -53,6 +55,7 @@ public class SetMealController {
 
     @PutMapping
     @Operation(summary = "修改套餐", description = "修改套餐")
+    @CacheEvict(value = "setMealCache", allEntries = true)
     public Result<String> update(@RequestBody SetMealDTO setMealDTO) {
         log.info("【修改套餐】setMealDTO:{}", setMealDTO);
         setMealService.update(setMealDTO);
@@ -61,6 +64,7 @@ public class SetMealController {
 
     @PostMapping("/status/{status}")
     @Operation(summary = "修改套餐状态", description = "修改套餐状态")
+    @CacheEvict(value = "setMealCache", allEntries = true)
     public Result<String> enableOrDisable(@PathVariable Integer status, Long id) {
         log.info("【修改套餐状态】status:{}, id:{}", status, id);
         setMealService.enableOrDisable(status, id);
@@ -69,6 +73,7 @@ public class SetMealController {
 
     @DeleteMapping
     @Operation(summary = "删除套餐", description = "删除套餐，删除套餐同时删除套餐中的菜品，可以删除一个或多个，用逗号分隔")
+    @CacheEvict(value = "setMealCache", allEntries = true)
     public Result<String> delete(@RequestParam List<Long> ids) {
         log.info("【删除套餐】ids:{}", ids);
         setMealService.delete(ids);

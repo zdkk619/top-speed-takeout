@@ -11,9 +11,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController("adminDishController")
 @RequestMapping("/admin/dish")
@@ -23,11 +25,31 @@ public class DishController {
 
     @Autowired
     private DishService dishService;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    /**
+     * 清空缓存
+     * @param pattern
+     */
+    private void cleanCache(String pattern) {
+        Set<String> keys = redisTemplate.keys(pattern);
+        if (keys != null && !keys.isEmpty()) {
+            redisTemplate.delete(keys);
+        }
+        log.info("【清空缓存】 pattern:{}, keys:{}", pattern, keys);
+    }
     @PostMapping
     @Operation(summary = "新增菜品", description = "新增菜品")
     public Result<String> save(@RequestBody DishDTO dishDTO) {
         log.info("【新增菜品】 dishDTO:{}", dishDTO);
         dishService.save(dishDTO);
+
+        // 清空缓存
+        String key = "dish_" + dishDTO.getCategoryId();
+        cleanCache(key);
+
         return Result.success();
     }
 
@@ -46,6 +68,9 @@ public class DishController {
     public Result<String> delete(@RequestParam List<Long> ids) {
         log.info("【删除菜品】 ids:{}", ids);
         dishService.delete(ids);
+
+        cleanCache("dish_*");
+
         return Result.success();
     }
 
@@ -54,6 +79,9 @@ public class DishController {
     public Result<String> enableOrDisable(@RequestParam Long id, @PathVariable Integer status) {
         log.info("【修改菜品状态】 id:{}, status:{}", id, status);
         dishService.enableOrDisable(id, status);
+
+        cleanCache("dish_*");
+
         return Result.success();
     }
 
@@ -70,6 +98,7 @@ public class DishController {
     public Result<String> update(@RequestBody DishDTO dishDTO) {
         log.info("【修改菜品】 dishDTO:{}", dishDTO);
         dishService.update(dishDTO);
+        cleanCache("dish_*");
         return Result.success();
     }
 

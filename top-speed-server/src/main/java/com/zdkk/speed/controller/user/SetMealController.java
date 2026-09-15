@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class SetMealController {
 
     @GetMapping("/list")
     @Operation(summary = "查询套餐列表", description = "查询套餐列表")
+    @Cacheable(value = "setMealCache", key = "#categoryId", condition = "#categoryId != null")
     public Result<List<SetMeal>> list(Long categoryId) {
         log.info("【用户套餐管理】查询套餐列表 categoryId:{}", categoryId);
         SetMeal setMeal = SetMeal.builder()
