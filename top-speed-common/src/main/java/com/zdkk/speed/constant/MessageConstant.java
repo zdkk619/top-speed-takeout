@@ -30,5 +30,6 @@ public class MessageConstant {
     public static final String CATEGORY_TYPE_NOT_FOUND = "分类类型不存在";
     public static final String DEFAULT_ADDRESS_NOT_EXISTS = "默认地址不存在";
     public static final String AMOUNT_ERROR = "金额错误";
+    public static final String ORDER_NUMBER_IS_INVALID = "订单号无效";
 }
 

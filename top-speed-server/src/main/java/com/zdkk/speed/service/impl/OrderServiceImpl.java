@@ -1,25 +1,26 @@
 package com.zdkk.speed.service.impl;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.zdkk.speed.constant.MessageConstant;
+import com.zdkk.speed.constant.WeChatConstant;
 import com.zdkk.speed.context.BaseContext;
+import com.zdkk.speed.dto.OrdersPaymentDTO;
 import com.zdkk.speed.dto.OrdersSubmitDTO;
-import com.zdkk.speed.entity.AddressBook;
-import com.zdkk.speed.entity.OrderDetail;
-import com.zdkk.speed.entity.Orders;
-import com.zdkk.speed.entity.ShoppingCart;
+import com.zdkk.speed.entity.*;
 import com.zdkk.speed.exception.AddressBookBusinessException;
+import com.zdkk.speed.exception.OrderBusinessException;
 import com.zdkk.speed.exception.ShoppingCartBusinessException;
-import com.zdkk.speed.mapper.AddressBookMapper;
-import com.zdkk.speed.mapper.OrderDetailMapper;
-import com.zdkk.speed.mapper.OrderMapper;
-import com.zdkk.speed.mapper.ShoppingCartMapper;
+import com.zdkk.speed.mapper.*;
 import com.zdkk.speed.service.OrderService;
+import com.zdkk.speed.utils.WeChatPayUtil;
+import com.zdkk.speed.vo.OrderPaymentVO;
 import com.zdkk.speed.vo.OrderSubmitVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,6 +36,12 @@ public class OrderServiceImpl implements OrderService {
     private ShoppingCartMapper shoppingCartMapper;
     @Autowired
     private AddressBookMapper addressBookMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private WeChatPayUtil weChatPayUtil;
 
     @Transactional
     @Override
@@ -99,5 +106,24 @@ public class OrderServiceImpl implements OrderService {
                 .orderAmount(order.getAmount())
                 .orderTime(order.getOrderTime())
                 .build();
+    }
+
+    @Override
+    public OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) throws Exception {
+        Long userId = BaseContext.getCurrentId();
+        User user = userMapper.getById(userId);
+
+        Orders order = orderMapper.getByNumber(ordersPaymentDTO.getOrderNumber());
+        if (order == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NUMBER_IS_INVALID);
+        }
+
+        // 调用微信支付接口，生成预支付交易订单
+        JSONObject jsonObject = weChatPayUtil.pay(ordersPaymentDTO.getOrderNumber(),
+                order.getAmount(),
+                "极速外卖订单",
+                user.getOpenid());
+
+        return jsonObject.toJavaObject(OrderPaymentVO.class);
     }
 }
