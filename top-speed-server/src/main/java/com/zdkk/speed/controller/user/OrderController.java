@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-@RestController
+@RestController("userOrderController")
 @RequestMapping("/user/order")
 @Slf4j
 @Tag(name = "用户订单管理")
@@ -69,7 +69,7 @@ public class OrderController {
     @Operation(summary = "取消订单", description = "取消订单")
     public Result<String> cancel(@PathVariable Long id) throws Exception {
         log.info("取消订单：{}", id);
-        orderService.cancel(id);
+        orderService.userCancel(id);
         return Result.success();
     }
 
