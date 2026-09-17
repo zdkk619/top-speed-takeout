@@ -3,6 +3,7 @@ package com.zdkk.speed.mapper;
 import com.github.pagehelper.Page;
 import com.zdkk.speed.dto.DishPageQueryDTO;
 import com.zdkk.speed.entity.Dish;
+import com.zdkk.speed.vo.DishOverViewVO;
 import com.zdkk.speed.vo.DishVO;
 import jakarta.validation.constraints.NotBlank;
 import org.apache.ibatis.annotations.Mapper;
@@ -76,4 +77,10 @@ public interface DishMapper {
      */
     @Select("select d.* from dish d join setmeal_dish s on d.id = s.dish_id where s.setmeal_id = #{setMealId}")
     List<Dish> getBySetMealId(Long setMealId);
+
+    /**
+     * 获取菜品 启售、停售情况
+     * @return
+     */
+    DishOverViewVO getOverviewDishes();
 }

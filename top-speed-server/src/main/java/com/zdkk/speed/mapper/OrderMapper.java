@@ -1,13 +1,17 @@
 package com.zdkk.speed.mapper;
 
 import com.github.pagehelper.Page;
+import com.zdkk.speed.dto.GoodsSalesDTO;
 import com.zdkk.speed.dto.OrdersPageQueryDTO;
 import com.zdkk.speed.entity.Orders;
+import com.zdkk.speed.vo.OrderOverViewVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface OrderMapper {
@@ -61,4 +65,34 @@ public interface OrderMapper {
      */
     @Select("SELECT * FROM orders WHERE status = #{status} AND order_time < #{orderTime}")
     List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTime);
+
+    /**
+     * 根据订单状态和时间范围查询订单金额总和
+     * @param map
+     * @return
+     */
+    Double sumByMap(Map<String, Object> map);
+
+    /**
+     * 根据条件查询订单数量
+     * @param map
+     * @return
+     */
+    Integer countByMap(Map<String, Object> map);
+
+    /**
+     * 根据时间范围查询销售前十的商品
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<GoodsSalesDTO> getSalesTop10(LocalDateTime startTime, LocalDateTime endTime);
+
+    /**
+     * 根据时间范围查询订单概览
+     * @param begin
+     * @param end
+     * @return
+     */
+    OrderOverViewVO getOverviewOrders(LocalDateTime begin, LocalDateTime end);
 }

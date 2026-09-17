@@ -65,4 +65,9 @@
         </where>
         order by create_time desc
     </select>
+    <select id="getOverviewSetMeals" resultType="com.zdkk.speed.vo.SetmealOverViewVO">
+        select sum(IF(status = 1, 1, 0)) as sold,
+        sum(IF(status = 0, 1, 0)) as discontinued
+        from setmeal
+    </select>
 </mapper>

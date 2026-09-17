@@ -21,6 +21,7 @@ import com.zdkk.speed.vo.OrderPaymentVO;
 import com.zdkk.speed.vo.OrderStatisticsVO;
 import com.zdkk.speed.vo.OrderSubmitVO;
 import com.zdkk.speed.vo.OrderVO;
+import com.zdkk.speed.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -55,6 +56,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private WeChatPayUtil weChatPayUtil;
+
+    @Autowired
+    private WebSocketServer webSocketServer;
 
     @Transactional
     @Override
@@ -164,6 +168,13 @@ public class OrderServiceImpl implements OrderService {
         // 设置支付完成时间
         order.setCheckoutTime(LocalDateTime.now());
         orderMapper.update(order);
+
+        // 通过WebSocket发送订单状态给商家
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("type", 1);
+        map.put("orderId", order.getId());
+        map.put("content", "订单号: " + outTradeNo);
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
     }
 
     @Override
@@ -378,6 +389,19 @@ public class OrderServiceImpl implements OrderService {
         orders.setStatus(Orders.COMPLETED);
         orders.setDeliveryTime(LocalDateTime.now());
         orderMapper.update(orders);
+    }
+
+    @Override
+    public void reminder(Long id) {
+        Orders orders = orderMapper.getById(id);
+        if (orders == null || !orders.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", 2);
+        map.put("id", orders.getId());
+        map.put("content", "订单号: " + orders.getNumber());
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
     }
 
     /**

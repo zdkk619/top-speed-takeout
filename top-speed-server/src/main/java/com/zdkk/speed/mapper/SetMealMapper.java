@@ -6,10 +6,12 @@ import com.zdkk.speed.dto.SetMealPageQueryDTO;
 import com.zdkk.speed.entity.SetMeal;
 import com.zdkk.speed.vo.DishItemVO;
 import com.zdkk.speed.vo.SetMealVO;
+import com.zdkk.speed.vo.SetmealOverViewVO;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -78,4 +80,10 @@ public interface SetMealMapper {
      */
     @Select("select sd.name, sd.copies, d.image, d.description from setmeal_dish sd join dish d on sd.dish_id = d.id where sd.setmeal_id = #{id}")
     List<DishItemVO> getDishItemsBySetMealId(Long id);
+
+    /**
+     * 查询套餐启售、停售情况
+     * @return
+     */
+    SetmealOverViewVO getOverviewSetMeals();
 }

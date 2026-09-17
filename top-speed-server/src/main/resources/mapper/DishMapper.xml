@@ -65,4 +65,8 @@
         </where>
         order by update_time desc
     </select>
+    <select id="getOverviewDishes" resultType="com.zdkk.speed.vo.DishOverViewVO">
+        select sum(if(status = 1, 1, 0)) as sold, sum(if(status = 0, 1, 0)) as discontinued
+        from dish
+    </select>
 </mapper>
