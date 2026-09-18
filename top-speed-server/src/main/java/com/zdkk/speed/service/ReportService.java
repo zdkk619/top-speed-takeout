@@ -4,6 +4,7 @@ import com.zdkk.speed.vo.OrderReportVO;
 import com.zdkk.speed.vo.SalesTop10ReportVO;
 import com.zdkk.speed.vo.TurnoverReportVO;
 import com.zdkk.speed.vo.UserReportVO;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.time.LocalDate;
 
@@ -42,4 +43,10 @@ public interface ReportService {
      * @return
      */
     SalesTop10ReportVO getSalesTop10(LocalDate begin, LocalDate end);
+
+    /**
+     * 导出一个月内的业务数据
+     * @param response
+     */
+    void exportBusinessData(HttpServletResponse response);
 }

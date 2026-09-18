@@ -8,6 +8,7 @@ import com.zdkk.speed.vo.TurnoverReportVO;
 import com.zdkk.speed.vo.UserReportVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,5 +56,11 @@ public class ReportController {
         log.info("查询销售TOP10 begin:{}, end:{}", begin, end);
         SalesTop10ReportVO salesTop10 = reportService.getSalesTop10(begin, end);
         return Result.success(salesTop10);
+    }
+
+    @GetMapping("/export")
+    @Operation(summary = "导出报表", description = "导出一个月内的数据报表")
+    public void export(HttpServletResponse response) {
+        reportService.exportBusinessData(response);
     }
 }

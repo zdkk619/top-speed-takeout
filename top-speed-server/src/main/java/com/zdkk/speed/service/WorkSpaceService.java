@@ -5,15 +5,20 @@ import com.zdkk.speed.vo.DishOverViewVO;
 import com.zdkk.speed.vo.OrderOverViewVO;
 import com.zdkk.speed.vo.SetmealOverViewVO;
 
+import java.time.LocalDateTime;
+
 /**
  * 工作台服务类
  */
 public interface WorkSpaceService {
+
     /**
      * 获取业务数据
+     * @param begin 开始时间
+     * @param end 结束时间
      * @return
      */
-    BusinessDataVO getBusinessData();
+    BusinessDataVO getBusinessData(LocalDateTime begin, LocalDateTime end);
 
     /**
      * 获取概览订单数据

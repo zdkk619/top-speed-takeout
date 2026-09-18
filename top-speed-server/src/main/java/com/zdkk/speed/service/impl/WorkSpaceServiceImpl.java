@@ -32,9 +32,8 @@ public class WorkSpaceServiceImpl implements WorkSpaceService {
     @Autowired
     private SetMealMapper setMealMapper;
     @Override
-    public BusinessDataVO getBusinessData() {
-        LocalDateTime begin = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-        LocalDateTime end = LocalDateTime.now();
+    public BusinessDataVO getBusinessData(LocalDateTime begin, LocalDateTime end) {
+
         BusinessDataVO businessDataVO = new BusinessDataVO();
 
         // 查询营业额
@@ -43,22 +42,42 @@ public class WorkSpaceServiceImpl implements WorkSpaceService {
         map.put("end", end);
         map.put("status", Orders.COMPLETED);
         Double turnover = orderMapper.sumByMap(map);
+        if (turnover == null) {
+            turnover = 0.0;
+        }
 
         // 查询有效订单数
         Integer validOrderCount = orderMapper.countByMap(map);
+        if (validOrderCount == null) {
+            validOrderCount = 0;
+        }
 
         map.remove("status");
         // 查询新增用户数
         Integer newUsers = userMapper.countByMap(map);
+        if (newUsers == null) {
+            newUsers = 0;
+        }
 
         // 查询总订单数
         Integer totalOrders = orderMapper.countByMap(map);
+        if (totalOrders == null) {
+            totalOrders = 0;
+        }
 
         businessDataVO.setTurnover(turnover);
         businessDataVO.setValidOrderCount(validOrderCount);
         businessDataVO.setNewUsers(newUsers);
-        businessDataVO.setOrderCompletionRate((double) validOrderCount / totalOrders);
-        businessDataVO.setUnitPrice(turnover / validOrderCount);
+        if (totalOrders != 0) {
+            businessDataVO.setOrderCompletionRate((double) validOrderCount / totalOrders);
+        } else {
+            businessDataVO.setOrderCompletionRate(0.0);
+        }
+        if (validOrderCount != 0) {
+            businessDataVO.setUnitPrice(turnover / validOrderCount);
+        } else {
+            businessDataVO.setUnitPrice(0.0);
+        }
         return businessDataVO;
     }
 

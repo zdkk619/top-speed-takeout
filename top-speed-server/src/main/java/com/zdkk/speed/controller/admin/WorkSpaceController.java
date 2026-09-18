@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @RequestMapping("/admin/workspace")
 @RestController
 @Slf4j
@@ -24,7 +28,9 @@ public class WorkSpaceController {
     @GetMapping("/businessData")
     @Operation(summary = "获取业务数据", description = "获取业务数据")
     public Result<BusinessDataVO> getBusinessData() {
-        return Result.success(workSpaceService.getBusinessData());
+        LocalDateTime begin = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime end = LocalDateTime.now();
+        return Result.success(workSpaceService.getBusinessData(begin, end));
     }
 
     @GetMapping("/overviewOrders")
